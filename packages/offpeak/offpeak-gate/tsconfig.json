@@ -10,7 +10,7 @@
     { "path": "../../../vendor/schemastery" },
     { "path": "../../core/agent" },
     { "path": "../../settings/settings" },
-    { "path": "../../client/ui-offpeak" },
+    { "path": "../../client/ui-offpeak/tsconfig.host.json" },
     { "path": "../../runtime-diagnostics/invariants" }
   ]
 }

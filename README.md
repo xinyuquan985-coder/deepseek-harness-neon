@@ -37,7 +37,7 @@ This fork is a developer preview. Interfaces and configuration may change while 
 git clone https://github.com/xinyuquan985-coder/deepseek-harness-neon.git
 cd deepseek-harness-neon
 pnpm install
-pnpm run build
+pnpm run build:runtime
 pnpm dsh web
 ```
 
@@ -48,6 +48,8 @@ On Windows, the repository also includes the local launcher:
 ```powershell
 .\start-deepseek-harness.cmd
 ```
+
+The launcher installs the locked workspace dependencies, runs the production-only `build:runtime` path for the repository frontend and Host, then starts `pnpm dsh web`. It deliberately does not use a separately packaged `.dsh-runtime`, so the Night City skin, character artwork, debate arena, trajectory workbench, and other Neon features come from the checked-out revision. The first launch can take several minutes while the workspace is installed and built.
 
 ## Workbench routing
 

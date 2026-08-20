@@ -160,7 +160,7 @@ describe('ui-theme apply', () => {
     const fiber = b.ctx.plugin({ inject: [...inject], apply })
     await fiber.await()
     const theme = b.ctx.get('theme') as ThemeRuntime
-    expect(theme.getTheme().preference).toBe('system')
+    expect(theme.getTheme().preference).toBe('cyber')
     pending.resolve(await describe())
     await vi.waitFor(() => { expect(theme.getTheme().preference).toBe('dark') })
     await fiber.dispose()
@@ -172,7 +172,7 @@ describe('ui-theme apply', () => {
     await b.ctx.plugin({ inject: [...inject], apply }).await()
     const theme = b.ctx.get('theme') as ThemeRuntime
     await vi.waitFor(() => { expect(b.describe).toHaveBeenCalledOnce() })
-    expect(theme.getTheme().preference).toBe('system')
+    expect(theme.getTheme().preference).toBe('cyber')
   })
 
   it('recovers after an HMR collapse of the declaring entry (stale disposer must not block)', async () => {

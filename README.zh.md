@@ -37,7 +37,7 @@ Neon Harness 是面向 DeepSeek Harness 的赛博朋克多智能体指挥中心�
 git clone https://github.com/xinyuquan985-coder/deepseek-harness-neon.git
 cd deepseek-harness-neon
 pnpm install
-pnpm run build
+pnpm run build:runtime
 pnpm dsh web
 ```
 
@@ -48,6 +48,8 @@ Windows 还可以使用仓库内的本地启动器：
 ```powershell
 .\start-deepseek-harness.cmd
 ```
+
+该启动器会安装锁定版本的工作区依赖，通过仅面向生产运行产物的 `build:runtime` 路径重新构建仓库前端与 Host，然后执行 `pnpm dsh web`。它不会调用独立打包的 `.dsh-runtime`，因此夜之城皮肤、人物立绘、辩论竞技场、轨迹工作台及其他 Neon 功能都来自当前检出的仓库版本。首次启动需要安装和构建整个工作区，可能耗时数分钟。
 
 ## 工作台路由
 
