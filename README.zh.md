@@ -81,4 +81,4 @@ Neon Harness 基于 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-h
 
 ## 许可证
 
-[MIT](LICENSE)。第三方依赖及其许可证见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+本仓库采用[组合授权](LICENSE)：来自上游 DeepSeek Harness 的内容继续遵循其 [MIT 许可证](LICENSES/UPSTREAM-MIT.txt)，Neon Harness 原创软件增量采用 [PolyForm Noncommercial 1.0.0](LICENSES/PolyForm-Noncommercial-1.0.0.md)。Neon 专属人物立绘、界面截图、音频和品牌素材仅供个人学习、教育、研究、测试及其他非商业用途；将 Neon 原创增量或素材用于商业项目必须另行取得书面许可，但该限制不会撤销上游 MIT 已授予的权利。第三方依赖继续遵循 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) 中列出的许可证。

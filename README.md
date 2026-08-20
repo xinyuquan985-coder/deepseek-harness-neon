@@ -81,4 +81,4 @@ Neon Harness is built on [DeepSeek Harness](https://github.com/deepseek-ai/deeps
 
 ## License
 
-[MIT](LICENSE). Third-party dependencies and their licenses are listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+This repository uses [split licensing](LICENSE): upstream DeepSeek Harness material remains under its [MIT License](LICENSES/UPSTREAM-MIT.txt), while original Neon Harness software additions use the [PolyForm Noncommercial License 1.0.0](LICENSES/PolyForm-Noncommercial-1.0.0.md). Neon-specific character artwork, screenshots, audio, and brand assets are available only for personal study, education, research, testing, and other noncommercial use. Commercial use of Neon-specific additions or assets requires separate written permission; this restriction does not revoke the upstream MIT rights. Third-party dependencies retain the licenses listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

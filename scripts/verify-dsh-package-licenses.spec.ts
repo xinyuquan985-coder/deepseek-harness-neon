@@ -21,7 +21,7 @@ function createWorkspace(): string {
   roots.push(root)
   writeManifest(root, 'package.json', {
     name: '@deepseek-ai/dsh-root',
-    license: 'MIT',
+    license: 'SEE LICENSE IN LICENSE',
     workspaces: ['apps/*', 'packages/*/*', 'vendor/*'],
   })
   return root
@@ -55,5 +55,24 @@ describe('DSH package license gate', () => {
     expect(inspectDshPackageLicenses(root).failures).toEqual([
       'packages/core/agent/package.json: @deepseek-ai/dsh-agent must declare "license": "MIT"; found undefined.',
     ])
+  })
+
+  it('requires the noncommercial license for Neon-owned packages', () => {
+    const root = createWorkspace()
+    writeManifest(root, 'packages/client/ui-persona/package.json', {
+      name: '@deepseek-ai/dsh-client-ui-persona',
+      license: 'MIT',
+    })
+    writeManifest(root, 'packages/client/ui-workbench/package.json', {
+      name: '@deepseek-ai/dsh-client-ui-workbench',
+      license: 'PolyForm-Noncommercial-1.0.0',
+    })
+
+    expect(inspectDshPackageLicenses(root)).toEqual({
+      packageCount: 3,
+      failures: [
+        'packages/client/ui-persona/package.json: @deepseek-ai/dsh-client-ui-persona must declare "license": "PolyForm-Noncommercial-1.0.0"; found "MIT".',
+      ],
+    })
   })
 })

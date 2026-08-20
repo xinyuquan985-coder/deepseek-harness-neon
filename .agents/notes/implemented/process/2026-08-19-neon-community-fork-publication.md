@@ -10,7 +10,7 @@ Publishing the local Neon workbench development as an ordinary copy of DeepSeek 
 
 ## Decision
 
-The public repository identifies itself as Neon Harness, an unofficial community fork of [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness), while retaining the upstream history, MIT license, third-party notices, package names, architecture documentation, and source attribution. The fork does not claim DeepSeek affiliation or endorsement.
+The public repository identifies itself as Neon Harness, an unofficial community fork of [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness), while retaining upstream provenance, the MIT notice for upstream portions, third-party notices, package names, architecture documentation, and source attribution. The [split-license decision](2026-08-20-neon-split-license.md) governs original Neon additions without reducing upstream MIT rights. The fork does not claim DeepSeek affiliation or endorsement.
 
 The initial Neon changes publish as one sanitized commit on top of the upstream default branch. The publication commit uses a GitHub `noreply` address, excludes machine-specific screenshots that contain local paths, replaces local paths in reviewable text snapshots, and ignores root runtime homes and logs. The original local worktree and its uncommitted files remain outside the publication branch.
 

@@ -1,21 +1,67 @@
-MIT License
+Neon Harness Combined License Notice
 
-Copyright (c) 2026 DeepSeek
+This repository is a derivative distribution of DeepSeek Harness and contains
+materials under different license terms. No single license applies to every
+file or every copyrightable portion of a modified file.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+1. Upstream DeepSeek Harness material
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Code and documentation obtained from DeepSeek Harness, including unchanged
+portions that remain inside files modified by Neon Harness, retain the MIT
+License in LICENSES/UPSTREAM-MIT.txt and their original copyright notices.
+Nothing in this notice limits the commercial-use rights that the upstream MIT
+License already grants for that upstream material.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+2. Neon Harness software additions
+
+Original software additions authored for Neon Harness are licensed under the
+PolyForm Noncommercial License 1.0.0 in
+LICENSES/PolyForm-Noncommercial-1.0.0.md. This includes the Neon-specific npm
+packages that declare that license and original Neon-specific code, styles,
+tests, and documentation added to or layered over upstream files.
+
+Required Notice: Copyright (c) 2026 xinyuquan985-coder. Neon Harness software
+additions are licensed for noncommercial purposes only under PolyForm
+Noncommercial 1.0.0. Commercial use requires separate written permission from
+the copyright holder.
+
+When a file contains both upstream material and Neon Harness additions, the
+MIT License continues to govern the upstream portions and the PolyForm
+Noncommercial License governs the original Neon portions. Receiving this
+combined repository does not convert upstream MIT material into
+noncommercial-only material.
+
+3. Visual, audio, and brand assets
+
+The following Neon-specific asset families are not covered by the upstream
+MIT License or the PolyForm software license:
+
+- assets/neon-harness-social-preview.jpg
+- apps/web/tests/snapshots/cyber-workbenches/*.png
+- docs/plans/assets/2026-08-17-cyberpunk-workbenches/*.png
+- packages/client/ui-conversation/src/client/skeleton/assets/*.png
+- packages/client/ui-persona/src/client/assets/*.png
+- packages/client/ui-sidebar/src/client/assets/session-startup-cue.mp3
+- packages/client/ui-workbench/src/client/assets/*.png
+
+To the extent the repository maintainer holds the necessary rights, permission
+is granted to copy, display, and modify these assets only for personal study,
+education, research, testing, and other noncommercial use with this notice
+preserved. Commercial use, sale, paid distribution, sublicensing, standalone
+asset resale, or use in a commercial product or service requires separate
+written permission from the applicable rights holder. Repository availability
+does not grant rights that the maintainer does not own. No trademark rights in
+the Neon Harness name, identity, or branding are granted.
+
+4. Third-party material
+
+Dependencies, vendored components, and other third-party material remain
+subject to their own notices and license terms. See THIRD_PARTY_NOTICES.md and
+license files located with those components.
+
+5. No warranty
+
+Each component is provided under the warranty disclaimer in its applicable
+license. To the extent no other disclaimer applies, the material is provided
+"as is", without warranty of any kind, and the maintainers are not liable for
+claims or damages arising from its use.

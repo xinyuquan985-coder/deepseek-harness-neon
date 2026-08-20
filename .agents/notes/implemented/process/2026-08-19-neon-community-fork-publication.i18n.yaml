@@ -2,5 +2,5 @@
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/process/2026-08-19-neon-community-fork-publication.md
-2026-08-19-neon-community-fork-publication.md: 6bd758767e2fce9fa7fa2d41125dd383a7b25170
-2026-08-19-neon-community-fork-publication.zh.md: e5ade6308b8dd8909950b594abc815530f9bb4a5
+2026-08-19-neon-community-fork-publication.md: f9bcb72c66f8bf5b9ba9c44b36c10927b9ca1c0c
+2026-08-19-neon-community-fork-publication.zh.md: dde3b3f4dea9546cefc68c276a805b26800a97be

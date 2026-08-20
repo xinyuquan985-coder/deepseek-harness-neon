@@ -10,7 +10,7 @@ Status: implemented
 
 ## 决策
 
-公开仓库使用 Neon Harness 名称，并明确说明它是 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 的非官方社区分支；同时保留上游提交历史、MIT 许可证、第三方声明、包名、架构文档与源码署名。该分支不声明与 DeepSeek 存在隶属、合作或官方背书关系。
+公开仓库使用 Neon Harness 名称，并明确说明它是 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 的非官方社区分支；同时保留上游来源、适用于上游部分的 MIT 声明、第三方声明、包名、架构文档与源码署名。[组合授权决策](2026-08-20-neon-split-license.md)约束 Neon 原创增量，但不缩减上游 MIT 已授予的权利。该分支不声明与 DeepSeek 存在隶属、合作或官方背书关系。
 
 首次 Neon 改动以一个经过脱敏的提交发布在上游默认分支之上。发布提交使用 GitHub `noreply` 地址，排除包含本机路径的截图，替换可评审文本快照中的本地路径，并忽略仓库根目录下的运行目录和日志。原本地 worktree 及其未提交文件不进入发布分支。
 

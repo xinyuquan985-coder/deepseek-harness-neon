@@ -12,7 +12,7 @@
     "start": "tsx server/index.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.server.json"
   },
-  "license": "MIT",
+  "license": "PolyForm-Noncommercial-1.0.0",
   "dependencies": {
     "@hono/node-server": "^1.19.14",
     "hono": "^4.12.29",

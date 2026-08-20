@@ -1,7 +1,7 @@
 {
   "name": "@deepseek-ai/dsh-root",
   "version": "0.1.0-rc.5",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@11.7.0",
