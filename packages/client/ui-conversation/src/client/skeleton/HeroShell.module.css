@@ -1,0 +1,356 @@
+/* NEW SESSION hero (figma Input_Bottom 75:8208): fish + title, workspace chip
+   above the shared InputBar card. The input itself is InputBar — only stack
+   geometry and the chip live here. */
+
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-width: 0;
+  padding: 0 24px;
+}
+
+.cityBackdrop {
+  display: none;
+}
+
+:global(body[data-theme-id='cyber']) .cityBackdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  overflow: hidden;
+  background: var(--dsw-alias-bg-base);
+  pointer-events: none;
+}
+
+.cityArtwork,
+.cityPortraitLift {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right center;
+  transform: scale(1.025);
+}
+
+.cityArtwork {
+  opacity: 1;
+  filter: saturate(1.12) contrast(1.06) brightness(0.96);
+}
+
+/* Reuse the exact approved artwork above the scan/grid layers, but reveal
+   only the portrait zone through a soft mask. This keeps her face, hair and
+   suit crisp without flattening the Night City treatment everywhere else. */
+.cityPortraitLift {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  opacity: 1;
+  filter: saturate(1.14) contrast(1.08) brightness(1.08);
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(ellipse 34% 72% at 84% 46%, #000 0 62%, rgba(0, 0, 0, 0.92) 72%, transparent 100%);
+  mask-image: radial-gradient(ellipse 34% 72% at 84% 46%, #000 0 62%, rgba(0, 0, 0, 0.92) 72%, transparent 100%);
+}
+
+:global(body[data-theme-id='cyber']) .cityBackdrop::before,
+:global(body[data-theme-id='cyber']) .cityBackdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+:global(body[data-theme-id='cyber']) .cityBackdrop::before {
+  z-index: 1;
+  background:
+    radial-gradient(ellipse at 48% 43%, transparent 0 16%, color-mix(in srgb, var(--dsw-alias-bg-base) 16%, transparent) 32%, transparent 49%),
+    linear-gradient(90deg, color-mix(in srgb, var(--dsw-alias-bg-base) 22%, transparent), transparent 32% 72%, color-mix(in srgb, var(--dsw-alias-bg-base) 12%, transparent));
+}
+
+:global(body[data-theme-id='cyber']) .cityBackdrop::after {
+  z-index: 2;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--dsw-alias-bg-base) 16%, transparent), transparent 28% 62%, var(--dsw-alias-bg-base)),
+    var(--dsw-specific-cyber-grid);
+  background-size: 100% 100%, 64px 64px;
+  opacity: 0.5;
+}
+
+.citySweep {
+  position: absolute;
+  top: -18%;
+  bottom: -18%;
+  left: 46%;
+  z-index: 3;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--dsw-specific-workbench-rail-border), transparent);
+  box-shadow: 0 0 24px var(--dsw-specific-workbench-rail-border);
+  opacity: 0.42;
+}
+
+/* Cap matches the InputBar card. Glow may paint past the sides. */
+.stack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  /* figma 75:8208: 12 between title block / workspace / card. */
+  gap: 12px;
+  width: 100%;
+  max-width: var(--dsh-composer-card-max-width);
+  overflow: visible;
+}
+
+/* figma 34:10411: fish + title, gap 10, centered; 26/32 wt500. The preview
+   badge is a product addition outside that source: a mono superscript pill
+   riding the title's top-right. */
+.headline {
+  display: grid;
+  grid-template-columns: 34px auto auto;
+  column-gap: 10px;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  line-height: 32px;
+  font-weight: 500;
+  color: var(--dsw-alias-label-primary);
+}
+
+:global(body[data-theme-id='cyber']) .headline {
+  position: relative;
+  color: var(--dsw-alias-label-primary);
+  font-family: var(--ds-font-family-code);
+  font-size: 28px;
+  line-height: 36px;
+  font-weight: 680;
+  letter-spacing: 0.035em;
+  text-shadow:
+    0 0 16px color-mix(in srgb, var(--dsw-alias-brand-business) 72%, transparent),
+    0 2px 16px var(--dsw-alias-bg-base);
+}
+
+:global(body[data-theme-id='cyber']) .headline::before,
+:global(body[data-theme-id='cyber']) .headline::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 72px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--dsw-specific-workbench-rail-border));
+  box-shadow: 0 0 12px var(--dsw-specific-workbench-rail-border);
+}
+
+:global(body[data-theme-id='cyber']) .headline::before {
+  right: calc(100% + 18px);
+}
+
+:global(body[data-theme-id='cyber']) .headline::after {
+  left: calc(100% + 18px);
+  transform: scaleX(-1);
+}
+
+.headlineText {
+  grid-row: 1;
+  grid-column: 2;
+}
+
+.previewBadge {
+  grid-row: 1;
+  grid-column: 3;
+  align-self: start;
+  margin-top: 2px;
+  margin-left: -3px;
+  padding: 1px 7px 0;
+  border: 1px solid var(--dsw-alias-interactive-bg-hover);
+  border-radius: 24px;
+  background: var(--dsw-alias-state-business-tertiary);
+  color: var(--dsw-alias-label-primary-bluish);
+  font-family: var(--ds-font-family-code);
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Keep hover detection on a stationary box while the mark moves within it. */
+.fishHitbox {
+  grid-row: 1;
+  grid-column: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Keep the hero mark in the same primary ink as its headline. */
+.fish {
+  color: var(--dsw-alias-label-primary);
+  transform-origin: 50% 60%;
+}
+
+@keyframes hero-fish-swim {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  35% {
+    transform: translate(-1px, -1px) rotate(-5deg);
+  }
+
+  70% {
+    transform: translate(1px, 0) rotate(3deg);
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .fishHitbox:hover .fish {
+    animation: hero-fish-swim var(--ds-transition-duration-slow) var(--ds-ease-in-out);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :global(body[data-theme-id='cyber']) .cityArtwork,
+  :global(body[data-theme-id='cyber']) .cityPortraitLift {
+    animation: night-city-breathe 18s ease-in-out infinite alternate;
+  }
+
+  :global(body[data-theme-id='cyber']) .citySweep {
+    animation: night-city-sweep 7s linear infinite;
+  }
+}
+
+@keyframes night-city-breathe {
+  from { transform: scale(1.025) translate3d(-0.35%, 0, 0); }
+  to { transform: scale(1.055) translate3d(0.35%, -0.35%, 0); }
+}
+
+@keyframes night-city-sweep {
+  from { transform: translateX(-190px); opacity: 0; }
+  18%, 76% { opacity: 0.42; }
+  to { transform: translateX(250px); opacity: 0; }
+}
+
+@media (max-width: 900px) {
+  :global(body[data-theme-id='cyber']) .cityArtwork {
+    object-position: 58% center;
+    opacity: 0.7;
+  }
+
+  :global(body[data-theme-id='cyber']) .headline {
+    font-size: 22px;
+    line-height: 30px;
+  }
+
+  :global(body[data-theme-id='cyber']) .headline::before,
+  :global(body[data-theme-id='cyber']) .headline::after {
+    width: 32px;
+  }
+}
+
+/* Workspace row sits 12px above the input card (figma y80 → y112). The blue
+   glow lives with the owner (ConversationRoot .heroGlow) so it can center on
+   the input card. */
+.body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  overflow: visible;
+}
+
+.body > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Must beat `.body > :not(.glow)` specificity so the open Menu (and its
+   right-hand submenu) paints above the InputBar card. */
+.body > .workspaceRow {
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  /* figma 75:8208 workspace row: px 8 above the card. */
+  padding-left: 8px;
+}
+
+/* Folder + label + chevron — transparent at rest; fill only on hover / open. */
+.workspace {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: min(100%, 360px);
+  min-height: 28px;
+  padding: 0 8px;
+  border: none;
+  border-radius: 16px;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.workspace:not(:disabled):hover,
+.workspace[aria-expanded='true'] {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+/* Locked form (bound guidance state): a static echo — no hover feedback, no
+   pointer affordance; label keeps full contrast. */
+.workspace:disabled {
+  cursor: default;
+}
+
+.folder {
+  flex: none;
+  color: var(--dsw-alias-label-primary);
+}
+
+.workspaceLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chevron {
+  flex: none;
+  color: var(--dsw-alias-label-caption);
+}
+
+/* Dialog field: 44 tall on the modal's 332 content column, r22, hairline
+   border, pad 14/7, 14/22 wt400 primary text, caption placeholder. Focus
+   keeps the resting border (design shows no focus ring). */
+.modalInput {
+  box-sizing: border-box;
+  width: 100%;
+  height: 44px;
+  padding: 7px 14px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 22px;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  color: var(--dsw-alias-label-primary);
+}
+
+.modalInput::placeholder {
+  color: var(--dsw-alias-label-caption);
+}
+
+.modalInput:disabled {
+  color: var(--dsw-alias-label-dimmed);
+}
+
+.modalAction {
+  min-width: 72px;
+}
+
+.modalError {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--dsw-alias-state-error-primary);
+}

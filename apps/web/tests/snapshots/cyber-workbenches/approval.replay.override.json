@@ -1,0 +1,38 @@
+[
+  {
+    "kind": "chunks",
+    "chunks": [
+      { "type": "block-start", "index": 0, "blockType": "text" },
+      { "type": "text-delta", "index": 0, "text": "我会先在当前权限策略下尝试写入。" },
+      { "type": "block-end", "index": 0, "block": { "type": "text", "text": "我会先在当前权限策略下尝试写入。" } },
+      { "type": "block-start", "index": 1, "blockType": "tool-call" },
+      { "type": "tool-call-delta", "index": 1, "id": "call_cyber_approval_probe", "name": "write", "argumentsDelta": "{\"file_path\":\"approval-preview.txt\",\"content\":\"CYBER_APPROVAL_OK\"}" },
+      { "type": "block-end", "index": 1, "block": { "type": "tool-call", "id": "call_cyber_approval_probe", "name": "write", "arguments": "{\"file_path\":\"approval-preview.txt\",\"content\":\"CYBER_APPROVAL_OK\"}" } },
+      { "type": "usage", "usage": { "inputTokens": 160, "outputTokens": 36 } },
+      { "type": "finish", "reason": { "kind": "tool-calls" } }
+    ]
+  },
+  {
+    "kind": "chunks",
+    "chunks": [
+      { "type": "block-start", "index": 0, "blockType": "text" },
+      { "type": "text-delta", "index": 0, "text": "预览文件已经生成；最终系统级校验需要申请一次受控的提升权限。" },
+      { "type": "block-end", "index": 0, "block": { "type": "text", "text": "预览文件已经生成；最终系统级校验需要申请一次受控的提升权限。" } },
+      { "type": "block-start", "index": 1, "blockType": "tool-call" },
+      { "type": "tool-call-delta", "index": 1, "id": "call_cyber_approval_escalated", "name": "write", "argumentsDelta": "{\"file_path\":\"approval-preview.txt\",\"content\":\"CYBER_APPROVAL_OK\",\"sandbox_permissions\":\"danger-full-access\",\"justification\":\"用户要求完成审批预览的最终系统级校验；本次受控写入需要临时提升权限。\"}" },
+      { "type": "block-end", "index": 1, "block": { "type": "tool-call", "id": "call_cyber_approval_escalated", "name": "write", "arguments": "{\"file_path\":\"approval-preview.txt\",\"content\":\"CYBER_APPROVAL_OK\",\"sandbox_permissions\":\"danger-full-access\",\"justification\":\"用户要求完成审批预览的最终系统级校验；本次受控写入需要临时提升权限。\"}" } },
+      { "type": "usage", "usage": { "inputTokens": 260, "outputTokens": 58 } },
+      { "type": "finish", "reason": { "kind": "tool-calls" } }
+    ]
+  },
+  {
+    "kind": "chunks",
+    "chunks": [
+      { "type": "block-start", "index": 0, "blockType": "text" },
+      { "type": "text-delta", "index": 0, "text": "审批完成，文件已创建。" },
+      { "type": "block-end", "index": 0, "block": { "type": "text", "text": "审批完成，文件已创建。" } },
+      { "type": "usage", "usage": { "inputTokens": 310, "outputTokens": 18 } },
+      { "type": "finish", "reason": { "kind": "stop" } }
+    ]
+  }
+]

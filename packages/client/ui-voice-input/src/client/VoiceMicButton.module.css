@@ -1,0 +1,42 @@
+/* Voice toggle: hidden outside the cyber theme (the default palettes keep
+ * their header action rows unchanged); the cyber theme shows it as a ghost
+ * icon button with the shared focus/hover tokens. */
+
+.button {
+  display: none;
+}
+
+:global(body[data-theme-id='cyber']) .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  cursor: pointer;
+}
+
+:global(body[data-theme-id='cyber']) .button:hover {
+  color: var(--dsw-alias-label-primary);
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+:global(body[data-theme-id='cyber']) .listening {
+  color: var(--dsw-alias-state-error-primary);
+  border-color: var(--dsw-alias-state-error-primary);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :global(body[data-theme-id='cyber']) .listening {
+    animation: voice-pulse 1.2s ease-in-out infinite;
+  }
+}
+
+@keyframes voice-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 46, 99, 0.5); }
+  50% { box-shadow: 0 0 0 6px rgba(255, 46, 99, 0); }
+}

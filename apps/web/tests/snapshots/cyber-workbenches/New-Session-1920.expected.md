@@ -1,0 +1,53 @@
+- button "新建会话": REAL AGENT COMMAND
+- button "收起侧边栏":
+  - img
+- button "新建会话":
+  - img
+  - text: 新会话
+- text: 工作区
+- button "搜索会话":
+  - img
+- textbox "搜索会话…"
+- button "视图选项":
+  - img
+- button "添加工作区":
+  - img
+- tree "会话":
+  - treeitem "deepseek harness" [expanded]:
+    - img
+    - text: deepseek harness
+  - treeitem "新会话" [selected]
+  - treeitem "未分组":
+    - img
+    - text: 未分组
+- button "设置":
+  - img
+  - text: 设置
+- text: 黑墙接入待命 预览版
+- button "选择工作区":
+  - img
+  - text: deepseek harness
+  - img
+- button "标准模式":
+  - img
+  - text: 标准模式
+  - img
+- textbox "描述你想要构建的内容"
+- button "命令":
+  - img
+- button "访问模式，当前：Workspace Write": Workspace Write
+- button "错峰模式":
+  - img
+- button "语音输入":
+  - img
+- button "选择模型，当前 DeepSeek-V4-Flash":
+  - text: DeepSeek-V4-Flash
+  - img
+- button "发送消息" [disabled]: 发送
+- text: 任务控制
+- button "关闭详情"
+- heading "任务控制栏" [level=2]
+- text: ›后台任务 2
+- list:
+  - listitem: probe_live_view bash 运行中
+  - listitem: diff_sidebar_structure bash 运行中

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and showcase / 提问与展示
+    url: https://github.com/xinyuquan985-coder/deepseek-harness-neon/discussions
+    about: Ask for help or share your Neon Harness setup. / 获取帮助或分享你的 Neon Harness 界面。
+  - name: Private security report / 私密安全报告
+    url: https://github.com/xinyuquan985-coder/deepseek-harness-neon/security/advisories/new
+    about: Report suspected vulnerabilities without exposing details publicly. / 请勿公开疑似漏洞细节。

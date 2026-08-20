@@ -1,0 +1,46 @@
+/* Off-peak chrome: the toggle rides the composer tool row (same 28px ghost
+ * shape as the resident controls); the dock line renders in the ambient band
+ * under the card. Colors name the phase, not the theme. */
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  cursor: pointer;
+}
+
+.toggle:hover {
+  color: var(--dsw-alias-label-primary);
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.toggle.paused {
+  color: var(--dsw-alias-state-warn-primary);
+  border-color: var(--dsw-alias-state-warn-primary);
+}
+
+.toggle.running {
+  color: var(--dsw-alias-state-success-primary);
+  border-color: var(--dsw-alias-state-success-primary);
+}
+
+.dock {
+  font-size: 12px;
+  line-height: 18px;
+  padding: 2px 0;
+}
+
+.dock.paused {
+  color: var(--dsw-alias-state-warn-primary);
+}
+
+.dock.running {
+  color: var(--dsw-alias-state-success-primary);
+}

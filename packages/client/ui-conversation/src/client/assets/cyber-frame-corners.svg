@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 240" preserveAspectRatio="none" fill="none">
+  <g stroke="#fff" stroke-linecap="square">
+    <path stroke-width="3" d="M2 52V18L18 2h146M2 78v72M2 174v48l16 16h146M998 52V18L982 2H836M998 78v72M998 174v48l-16 16H836"/>
+    <path stroke-width="1" opacity=".72" d="M26 2l13 13h74M139 2l8 8h52M974 2l-13 13h-74M861 2l-8 8h-52M26 238l13-13h74M139 238l8-8h52M974 238l-13-13h-74M861 238l-8-8h-52"/>
+    <path stroke-width="1" opacity=".48" d="M2 64h22l8-8h42M998 64h-22l-8-8h-42M2 162h22l8 8h42M998 162h-22l-8 8h-42"/>
+  </g>
+</svg>

@@ -1,0 +1,247 @@
+/* Persona identity rail: hidden outside Cyber; the keyed seat stays mounted
+ * above the untouched message renderer, so markdown width and semantics do
+ * not move. */
+
+.root {
+  display: none;
+  padding: 0 2px 5px;
+}
+
+:global(body[data-theme-id='cyber']) .root {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+}
+
+.user {
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+}
+
+.assistant {
+  justify-content: flex-start;
+}
+
+.frame {
+  --persona-chamfer: 7px;
+  --persona-inner-chamfer: calc(var(--persona-chamfer) - 2px);
+
+  position: relative;
+  flex: none;
+  display: block;
+  width: 32px;
+  height: 32px;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 2px;
+  border: 0;
+  background: currentColor;
+  clip-path: polygon(
+    var(--persona-chamfer) 0,
+    calc(100% - var(--persona-chamfer)) 0,
+    100% var(--persona-chamfer),
+    100% calc(100% - var(--persona-chamfer)),
+    calc(100% - var(--persona-chamfer)) 100%,
+    var(--persona-chamfer) 100%,
+    0 calc(100% - var(--persona-chamfer)),
+    0 var(--persona-chamfer)
+  );
+}
+
+.viewport {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--dsw-alias-bg-layer-1);
+  clip-path: polygon(
+    var(--persona-inner-chamfer) 0,
+    calc(100% - var(--persona-inner-chamfer)) 0,
+    100% var(--persona-inner-chamfer),
+    100% calc(100% - var(--persona-inner-chamfer)),
+    calc(100% - var(--persona-inner-chamfer)) 100%,
+    var(--persona-inner-chamfer) 100%,
+    0 calc(100% - var(--persona-inner-chamfer)),
+    0 var(--persona-inner-chamfer)
+  );
+}
+
+.viewport::before {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background-image:
+    linear-gradient(to bottom, transparent 0 36%, color-mix(in srgb, currentColor 34%, transparent) 48%, transparent 58%),
+    var(--dsw-specific-cyber-holo-noise);
+  background-position: 0 -130%, 0 0;
+  background-size: 100% 240%, 100% 100%;
+  content: '';
+  mix-blend-mode: screen;
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.viewport::after {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(118deg, transparent 0 48%, color-mix(in srgb, currentColor 16%, transparent) 50%, transparent 53%),
+    linear-gradient(to bottom, transparent 0 72%, color-mix(in srgb, currentColor 12%, transparent) 100%);
+  content: '';
+  mix-blend-mode: screen;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.portrait {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.08) contrast(1.06) brightness(0.94);
+  transform: scale(1.2);
+  transform-origin: center;
+}
+
+.user .portrait {
+  transform: scale(-1.2, 1.2);
+}
+
+.user .frame {
+  color: var(--dsw-alias-brand-primary);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--dsw-alias-brand-primary) 30%, transparent);
+}
+
+.assistant .frame {
+  color: var(--dsw-alias-brand-business);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--dsw-alias-brand-business) 30%, transparent);
+}
+
+:global(body[data-theme-id='cyber']) .frame {
+  filter: drop-shadow(0 0 7px color-mix(in srgb, currentColor 32%, transparent));
+}
+
+:global(body[data-theme-id='cyber']) .assistant .portrait {
+  filter: saturate(0.96) contrast(1.08) brightness(0.98);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :global(body[data-theme-id='cyber']) .viewport::before {
+    animation: cyber-persona-holo-scan 3.8s linear infinite;
+  }
+
+  :global(body[data-theme-id='cyber']) .frame {
+    animation: cyber-persona-signal-jitter 6.4s steps(2, end) infinite;
+  }
+
+  :global(body[data-theme-id='cyber']) .statusDot {
+    animation: cyber-persona-status-pulse 1.7s ease-in-out infinite;
+  }
+}
+
+@keyframes cyber-persona-holo-scan {
+  0% { background-position: 0 -130%, 0 0; opacity: 0.42; }
+  55% { opacity: 0.82; }
+  100% { background-position: 0 150%, 0 12px; opacity: 0.5; }
+}
+
+@keyframes cyber-persona-signal-jitter {
+  0%, 38%, 41%, 70%, 73%, 100% { filter: drop-shadow(0 0 7px color-mix(in srgb, currentColor 32%, transparent)); }
+  39% { filter: drop-shadow(2px 0 5px color-mix(in srgb, var(--dsw-alias-state-error-primary) 48%, transparent)); }
+  40%, 71% { filter: drop-shadow(-2px 0 6px color-mix(in srgb, var(--dsw-alias-brand-business) 58%, transparent)); }
+  72% { filter: drop-shadow(1px 0 9px color-mix(in srgb, currentColor 55%, transparent)); }
+}
+
+@keyframes cyber-persona-status-pulse {
+  0%, 100% { opacity: 0.48; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.25); }
+}
+
+.identity {
+  display: grid;
+  min-width: 0;
+  gap: 1px;
+}
+
+.user .identity {
+  justify-items: end;
+}
+
+.name {
+  color: var(--dsw-alias-label-primary);
+  font-family: var(--ds-font-family-code);
+  font-size: 10px;
+  line-height: 14px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--dsw-alias-label-tertiary);
+  font-family: var(--ds-font-family-code);
+  font-size: 9px;
+  line-height: 12px;
+  letter-spacing: 0.04em;
+}
+
+.statusDot {
+  width: 4px;
+  height: 4px;
+  background: var(--dsw-alias-brand-business);
+  box-shadow: 0 0 6px var(--dsw-alias-brand-business);
+}
+
+.user .statusDot {
+  background: var(--dsw-alias-brand-primary);
+  box-shadow: 0 0 6px var(--dsw-alias-brand-primary);
+}
+
+:global(body[data-theme-id='cyber'][data-workbench-kind='conversation']) .root,
+:global(body[data-theme-id='cyber'][data-workbench-kind='code']) .root {
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 88px;
+  padding: 0;
+  gap: 5px;
+}
+
+:global(body[data-theme-id='cyber'][data-workbench-kind='conversation']) .frame,
+:global(body[data-theme-id='cyber'][data-workbench-kind='code']) .frame {
+  --persona-chamfer: 10px;
+
+  width: 82px;
+  height: 80px;
+}
+
+:global(body[data-theme-id='cyber'][data-workbench-kind='conversation']) .identity,
+:global(body[data-theme-id='cyber'][data-workbench-kind='conversation']) .user .identity,
+:global(body[data-theme-id='cyber'][data-workbench-kind='code']) .identity,
+:global(body[data-theme-id='cyber'][data-workbench-kind='code']) .user .identity {
+  justify-items: center;
+  text-align: center;
+}
+
+:global(body[data-theme-id='cyber'][data-workbench-kind='conversation']) .name,
+:global(body[data-theme-id='cyber'][data-workbench-kind='code']) .name {
+  font-size: 11px;
+  line-height: 15px;
+  text-transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frame,
+  .statusDot {
+    animation: none;
+    box-shadow: none;
+  }
+
+  .viewport::before {
+    animation: none;
+    opacity: 0.38;
+  }
+}

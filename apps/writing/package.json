@@ -1,0 +1,31 @@
+{
+  "name": "@deepseek-ai/dsh-writing-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Guided long-form writing app: fill in an inspiration and get step-by-step coaching that writes the article one section at a time",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "dev:server": "tsx watch server/index.ts",
+    "dev:client": "vite",
+    "build": "vite build",
+    "start": "tsx server/index.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.server.json"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@hono/node-server": "^1.19.14",
+    "hono": "^4.12.29",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.0",
+    "@types/react": "~18.3.1",
+    "@types/react-dom": "~18.3.0",
+    "@vitejs/plugin-react": "^4.7.0",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3",
+    "vite": "^6.0.0"
+  }
+}

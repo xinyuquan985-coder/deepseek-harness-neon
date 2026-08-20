@@ -1,0 +1,37 @@
+- banner:
+  - navigation "Session hierarchy":
+    - button "Cyberpunk skin check" [disabled]
+  - button "Session log":
+    - text: Session log
+    - img
+  - tablist:
+    - tab "Chat" [selected]
+    - tab "VS 对决"
+    - tab "Trajectory"
+- text: "Netrunner Cyberpunk skin check: hello Night City. 7/25 {{clock}}"
+- button "Copy":
+  - img
+- text: Blackwall AI
+- paragraph: Night City never sleeps. Done.
+- button "Copy":
+  - img
+- button "Good response":
+  - img
+- button "Bad response":
+  - img
+- button "Branch into a new conversation":
+  - img
+- text: 7/25 {{clock}} Ran for {{duration}}
+- textbox "Message the agent"
+- button "Commands":
+  - img
+- 'button "Access mode, current: Workspace Write"': Workspace Write
+- button "Off-peak mode":
+  - img
+- button "Voice input":
+  - img
+- button "Select model, current DeepSeek-V4-Flash":
+  - text: DeepSeek-V4-Flash
+  - img
+- button "Send message" [disabled]
+- text: 1 turns · 1 steps LLM {{duration}}

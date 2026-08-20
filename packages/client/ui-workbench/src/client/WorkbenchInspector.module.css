@@ -1,0 +1,812 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  font-family: var(--ds-font-family-code);
+}
+
+.identity {
+  position: relative;
+  min-height: 50px;
+  padding: 12px 42px 12px 14px;
+  overflow: hidden;
+  border: 1px solid var(--dsw-specific-workbench-rail-border);
+  background: var(--dsw-specific-workbench-rail-fill);
+  clip-path: none;
+}
+
+.identity::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 2px;
+  background: var(--dsw-alias-brand-primary);
+  content: '';
+}
+
+.identity::after {
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  width: 38px;
+  height: 1px;
+  background: var(--dsw-alias-border-l2);
+  box-shadow: 8px -4px 0 var(--dsw-alias-border-l1);
+  content: '';
+}
+
+.eyebrow {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--dsw-specific-workbench-role-accent);
+  font-size: 9px;
+  line-height: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  color: var(--dsw-alias-label-primary);
+  font-family: var(--ds-font-family);
+  font-size: 20px;
+  line-height: 26px;
+  font-weight: 720;
+}
+
+:global(body[data-theme-id='cyber']) .eyebrow {
+  display: none;
+}
+
+:global(body[data-theme-id='cyber']) .identity {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  padding-block: 10px;
+  background-color: var(--dsw-specific-workbench-rail-fill);
+  background-image: var(--dsw-specific-cyber-carbon), var(--dsw-specific-cyber-glass);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--dsw-alias-label-primary) 7%, transparent),
+    var(--dsw-specific-cyber-bloom-yellow);
+}
+
+:global(body[data-theme-id='cyber']) .title {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 22px;
+  line-height: 28px;
+}
+
+.suggested {
+  display: none;
+}
+
+:global(body[data-theme-id='cyber']) .suggested {
+  display: inline-block;
+  padding: 2px 7px;
+  border: 1px solid var(--dsw-alias-brand-primary);
+  color: var(--dsw-alias-brand-primary);
+  font-family: var(--ds-font-family-code);
+  font-size: 9px;
+  font-weight: 500;
+  line-height: 15px;
+}
+
+:global(body[data-theme-id='cyber']) .sectionHeader {
+  min-height: 38px;
+  padding-inline: 12px;
+}
+
+:global(body[data-theme-id='cyber']) .sectionLabel::before {
+  margin-right: 7px;
+  color: var(--dsw-alias-brand-primary);
+  content: '›';
+}
+
+:global(body[data-theme-id='cyber']) .goalObjective,
+:global(body[data-theme-id='cyber']) .todoContent,
+:global(body[data-theme-id='cyber']) .rowTitle {
+  font-size: 12px;
+  line-height: 18px;
+}
+
+:global(body[data-theme-id='cyber'][data-workbench-kind='conversation']) .title {
+  color: var(--dsw-alias-brand-primary);
+}
+
+.sections {
+  display: grid;
+  gap: 7px;
+}
+
+.root[data-workbench-kind='trajectory'] {
+  padding: 8px;
+  border: 1px solid color-mix(in srgb, var(--dsw-alias-brand-primary) 72%, var(--dsw-alias-border-l2));
+  background: color-mix(in srgb, var(--dsw-alias-bg-base) 82%, transparent);
+}
+
+.root[data-workbench-kind='trajectory'] .identity {
+  min-height: 52px;
+  border-color: color-mix(in srgb, var(--dsw-alias-brand-primary) 48%, var(--dsw-alias-border-l2));
+}
+
+.root[data-workbench-kind='trajectory'] .identity::before {
+  background: var(--dsw-alias-brand-primary);
+}
+
+.section {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--dsw-specific-workbench-rail-border);
+  background: var(--dsw-specific-workbench-rail-fill);
+  clip-path: none;
+}
+
+:global(body[data-theme-id='cyber']) .section {
+  background-color: var(--dsw-specific-workbench-rail-fill);
+  background-image:
+    var(--dsw-specific-cyber-energy-line),
+    var(--dsw-specific-cyber-carbon),
+    var(--dsw-specific-cyber-glass);
+  background-position: 140% 0, 0 0, 0 0;
+  background-repeat: no-repeat, repeat, no-repeat;
+  background-size: 220% 1px, auto, auto;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--dsw-alias-label-primary) 5%, transparent),
+    var(--dsw-specific-cyber-bloom-cyan);
+}
+
+:global(body[data-theme-id='cyber']) .sectionHeader {
+  background-image: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--dsw-alias-brand-business) 10%, transparent),
+    transparent 72%
+  );
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 34px;
+  padding: 6px 9px 6px 12px;
+  border-bottom: 1px solid var(--dsw-alias-border-l1);
+  background: var(--dsw-alias-bg-layer-2);
+}
+
+.sectionLabel {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--dsw-alias-label-secondary);
+  color: var(--dsw-alias-label-primary);
+  font-family: var(--ds-font-family);
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 16px;
+  letter-spacing: 0.02em;
+  text-overflow: ellipsis;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.count {
+  display: grid;
+  flex: none;
+  place-items: center;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 5px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  color: var(--dsw-alias-brand-business);
+  font-size: 10px;
+  line-height: 16px;
+}
+
+.goalRow {
+  display: grid;
+  gap: 8px;
+  padding: 9px 10px 10px;
+}
+
+.goalObjective {
+  margin: 0;
+  color: var(--dsw-alias-label-primary);
+  font-family: var(--ds-font-family);
+  font-size: 12px;
+  line-height: 18px;
+  overflow-wrap: anywhere;
+}
+
+.goalStatus {
+  justify-self: start;
+  padding: 1px 6px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  color: var(--dsw-alias-brand-business);
+  font-size: 9px;
+  line-height: 15px;
+  letter-spacing: 0.05em;
+}
+
+.goalStatus[data-state='blocked'] {
+  border-color: var(--dsw-alias-state-error-border);
+  color: var(--dsw-alias-state-error-primary);
+}
+
+.trajectorySelection {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 8px;
+  align-items: center;
+  padding: 8px 10px 9px;
+  border-left: 2px solid var(--dsw-alias-brand-primary);
+  background: var(--dsw-alias-bg-base);
+}
+
+.trajectoryLocation {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--dsw-alias-label-primary);
+  font-size: 10px;
+  line-height: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trajectoryModel {
+  grid-column: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 9px;
+  line-height: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trajectoryStatus {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  color: var(--dsw-alias-brand-business);
+  font-size: 9px;
+  line-height: 14px;
+  text-transform: uppercase;
+}
+
+.trajectorySelection[data-request-status='error'] {
+  border-left-color: var(--dsw-alias-state-error-primary);
+}
+
+.trajectorySelection[data-request-status='error'] .trajectoryStatus {
+  color: var(--dsw-alias-state-error-primary);
+}
+
+.progressSummary {
+  padding: 8px 10px 5px;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 10px;
+  line-height: 15px;
+}
+
+.progressTrack {
+  height: 2px;
+  margin: 0 10px 8px;
+  overflow: hidden;
+  background: var(--dsw-alias-border-l1);
+}
+
+.progressTrack > span {
+  display: block;
+  height: 100%;
+  background: var(--dsw-alias-brand-primary);
+}
+
+.todoRows,
+.rows,
+.fileRows {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.todoRow,
+.row {
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr) auto;
+  gap: 7px;
+  align-items: center;
+  min-height: 34px;
+  padding: 5px 9px;
+  border-top: 1px solid var(--dsw-alias-border-l1);
+}
+
+.todoRow:first-child,
+.row:first-child {
+  border-top: 0;
+}
+
+.todoMark,
+.stateDot {
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  background: var(--dsw-alias-bg-base);
+}
+
+.todoRow[data-state='completed'] .todoMark,
+.row[data-state='completed'] .stateDot,
+.row[data-state='inactive'] .stateDot {
+  background: var(--dsw-alias-label-tertiary);
+}
+
+.todoRow[data-state='in_progress'] .todoMark,
+.row[data-state='running'] .stateDot {
+  background: var(--dsw-alias-brand-primary);
+  box-shadow: 0 0 8px var(--dsw-alias-brand-primary);
+}
+
+.row[data-state='failed'] .stateDot,
+.row[data-state='killed'] .stateDot,
+.row[data-state='stopping'] .stateDot {
+  border-color: var(--dsw-alias-state-error-border);
+  background: var(--dsw-alias-state-error-primary);
+}
+
+.todoContent,
+.rowTitle {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--dsw-alias-label-primary);
+  font-family: var(--ds-font-family);
+  font-size: 11px;
+  line-height: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rowBody {
+  display: grid;
+  min-width: 0;
+}
+
+.rowMeta,
+.status {
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 9px;
+  line-height: 13px;
+  white-space: nowrap;
+}
+
+.rowAction {
+  display: grid;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.rowAction:hover .rowTitle,
+.rowAction:focus-visible .rowTitle {
+  color: var(--dsw-alias-brand-business);
+}
+
+.rowAction:focus-visible,
+.stopAction:focus-visible,
+.fileAction:focus-visible {
+  outline: 1px solid var(--dsw-alias-brand-primary);
+  outline-offset: 2px;
+}
+
+.row:has(.stopAction) {
+  grid-template-columns: 8px minmax(0, 1fr) auto auto;
+}
+
+.agentFrame {
+  display: block;
+  grid-area: portrait;
+  width: 82px;
+  height: 80px;
+  padding: 2px;
+  box-sizing: border-box;
+  clip-path: polygon(
+    10px 0,
+    calc(100% - 10px) 0,
+    100% 10px,
+    100% calc(100% - 10px),
+    calc(100% - 10px) 100%,
+    10px 100%,
+    0 calc(100% - 10px),
+    0 10px
+  );
+  color: var(--dsw-alias-brand-business);
+  background: currentColor;
+}
+
+.agentViewport {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  clip-path: polygon(
+    9px 0,
+    calc(100% - 9px) 0,
+    100% 9px,
+    100% calc(100% - 9px),
+    calc(100% - 9px) 100%,
+    9px 100%,
+    0 calc(100% - 9px),
+    0 9px
+  );
+  background: var(--dsw-alias-bg-base);
+}
+
+.agentPortrait {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.08) contrast(1.08) brightness(0.94);
+  transform: scale(1.2);
+}
+
+:global(body[data-theme-id='cyber']) .agentFrame {
+  box-shadow: var(--dsw-specific-cyber-bloom-cyan);
+}
+
+:global(body[data-theme-id='cyber']) .agentViewport {
+  position: relative;
+}
+
+:global(body[data-theme-id='cyber']) .agentViewport::before {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background-image:
+    linear-gradient(to bottom, transparent 0 38%, color-mix(in srgb, currentColor 34%, transparent) 50%, transparent 60%),
+    var(--dsw-specific-cyber-holo-noise);
+  background-position: 0 -140%, 0 0;
+  background-size: 100% 250%, 100% 100%;
+  content: '';
+  mix-blend-mode: screen;
+  opacity: 0.68;
+  pointer-events: none;
+}
+
+:global(body[data-theme-id='cyber']) .agentViewport::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(132deg, transparent 0 52%, color-mix(in srgb, currentColor 13%, transparent) 54%, transparent 58%);
+  content: '';
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :global(body[data-theme-id='cyber']) .section {
+    animation: cyber-rail-energy 5.6s linear infinite;
+  }
+
+  :global(body[data-theme-id='cyber']) .agentViewport::before {
+    animation: cyber-agent-holo-scan 4.2s linear infinite;
+  }
+
+  .agentRow[data-state='running'] .agentPortrait {
+    animation: cyber-agent-signal-live 3.1s steps(2, end) infinite;
+  }
+}
+
+@keyframes cyber-rail-energy {
+  from { background-position: 140% 0, 0 0, 0 0; }
+  to { background-position: -40% 0, 0 0, 0 0; }
+}
+
+@keyframes cyber-agent-holo-scan {
+  from { background-position: 0 -140%, 0 0; opacity: 0.42; }
+  55% { opacity: 0.82; }
+  to { background-position: 0 150%, 0 12px; opacity: 0.48; }
+}
+
+@keyframes cyber-agent-signal-live {
+  0%, 44%, 47%, 100% { filter: saturate(1.08) contrast(1.08) brightness(0.94); }
+  45% { filter: saturate(1.42) contrast(1.18) brightness(1.04) hue-rotate(9deg); }
+  46% { filter: saturate(0.92) contrast(1.26) brightness(0.88) hue-rotate(-8deg); }
+}
+
+.root[data-workbench-kind='trajectory'] .agentRow,
+.root[data-workbench-view='debate-vs'] .agentRow {
+  grid-template-columns: 82px 8px minmax(0, 1fr) auto;
+  grid-template-areas:
+    'portrait state body status'
+    'portrait . body stop';
+  min-height: 96px;
+  padding: 7px 9px;
+  gap: 4px 10px;
+  border-top-color: var(--dsw-alias-border-l2);
+  background-color: color-mix(in srgb, var(--dsw-alias-bg-layer-2) 62%, transparent);
+  background-image: var(--dsw-specific-cyber-carbon);
+}
+
+.root[data-workbench-kind='trajectory'] .agentRow:first-child,
+.root[data-workbench-view='debate-vs'] .agentRow:first-child {
+  border-top: 0;
+}
+
+.root[data-workbench-kind='trajectory'] .agentRow .stateDot,
+.root[data-workbench-view='debate-vs'] .agentRow .stateDot {
+  grid-area: state;
+}
+
+.root[data-workbench-kind='trajectory'] .agentRow .rowAction,
+.root[data-workbench-view='debate-vs'] .agentRow .rowAction {
+  grid-area: body;
+  align-self: center;
+  gap: 5px;
+}
+
+.agentRole {
+  color: var(--dsw-alias-state-success-primary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.root[data-workbench-kind='trajectory'] .agentRow .rowTitle,
+.root[data-workbench-view='debate-vs'] .agentRow .rowTitle {
+  color: var(--dsw-alias-label-primary);
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.root[data-workbench-kind='trajectory'] .agentRow .status,
+.root[data-workbench-view='debate-vs'] .agentRow .status {
+  grid-area: status;
+  color: var(--dsw-alias-state-success-primary);
+}
+
+.root[data-workbench-kind='trajectory'] .agentRow .stopAction,
+.root[data-workbench-view='debate-vs'] .agentRow .stopAction {
+  grid-area: stop;
+  justify-self: end;
+}
+
+.agentRow[data-agent-role='debate-affirmative'] .agentFrame {
+  color: var(--dsw-alias-brand-primary);
+}
+
+.agentRow[data-agent-role='debate-negative'] .agentFrame {
+  color: var(--dsw-alias-state-error-primary);
+}
+
+.agentRow[data-agent-role='debate-judge'] .agentFrame {
+  color: var(--dsw-alias-brand-business);
+}
+
+.stopAction {
+  padding: 1px 5px;
+  border: 1px solid var(--dsw-specific-workbench-danger-outline);
+  background: transparent;
+  color: var(--dsw-alias-state-error-primary);
+  cursor: pointer;
+  font: inherit;
+  font-size: 9px;
+  line-height: 15px;
+}
+
+.fileRows {
+  padding: 5px 7px 7px;
+}
+
+.fileAction {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  gap: 7px;
+  padding: 5px 4px;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+  line-height: 16px;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileAction:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+  color: var(--dsw-alias-brand-business);
+}
+
+.fileGlyph {
+  flex: none;
+  color: var(--dsw-alias-brand-business);
+}
+
+.changeLedger {
+  border-color: var(--dsw-alias-border-l2);
+}
+
+.changeFilters {
+  display: flex;
+  align-items: stretch;
+  padding: 6px;
+  border-bottom: 1px solid var(--dsw-alias-border-l1);
+  background: var(--dsw-alias-bg-base);
+}
+
+.changeFilter {
+  display: inline-flex;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  min-height: 25px;
+  padding: 3px 5px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--dsw-alias-label-tertiary);
+  cursor: pointer;
+  font: inherit;
+  font-size: 9px;
+  line-height: 15px;
+}
+
+.changeFilter:hover,
+.changeFilter:focus-visible {
+  color: var(--dsw-alias-label-primary);
+}
+
+.changeFilter:focus-visible {
+  outline: 1px solid var(--dsw-alias-brand-primary);
+  outline-offset: -1px;
+}
+
+.changeFilter[aria-pressed='true'] {
+  border-color: var(--dsw-alias-brand-primary);
+  background: var(--dsw-alias-interactive-bg-hover);
+  color: var(--dsw-alias-brand-business);
+}
+
+.changeFilter > span {
+  color: var(--dsw-alias-label-caption);
+}
+
+.changeRows {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.changeRow {
+  display: grid;
+  grid-template-columns: 7px minmax(0, 1fr) auto;
+  grid-template-areas:
+    'state path stats'
+    'state path status';
+  gap: 1px 7px;
+  align-items: center;
+  min-height: 42px;
+  padding: 5px 8px;
+  border-top: 1px solid var(--dsw-alias-border-l1);
+}
+
+.changeRow:first-child {
+  border-top: 0;
+}
+
+.changeState {
+  grid-area: state;
+  width: 5px;
+  height: 18px;
+  background: var(--dsw-alias-brand-business);
+}
+
+.changeRow[data-change-status='running'] .changeState {
+  background: var(--dsw-alias-brand-primary);
+  box-shadow: 0 0 7px var(--dsw-alias-brand-primary);
+}
+
+.changePath {
+  display: grid;
+  grid-area: path;
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.changePath > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.changePath > span:first-child {
+  color: var(--dsw-alias-label-primary);
+  font-family: var(--ds-font-family);
+  font-size: 10px;
+  line-height: 15px;
+}
+
+.changePath > span:last-child {
+  color: var(--dsw-alias-label-caption);
+  font-size: 8px;
+  line-height: 12px;
+}
+
+.changePath:hover > span:first-child,
+.changePath:focus-visible > span:first-child {
+  color: var(--dsw-alias-brand-business);
+}
+
+.changePath:focus-visible {
+  outline: 1px solid var(--dsw-alias-brand-primary);
+  outline-offset: 2px;
+}
+
+.changeStats {
+  display: inline-flex;
+  grid-area: stats;
+  gap: 5px;
+  font-size: 9px;
+  line-height: 13px;
+}
+
+.changeStats > span:first-child {
+  color: var(--dsw-alias-state-success-primary);
+}
+
+.changeStats > span:last-child {
+  color: var(--dsw-alias-state-error-primary);
+}
+
+.changeStatus {
+  grid-area: status;
+  justify-self: end;
+  color: var(--dsw-alias-label-caption);
+  font-size: 8px;
+  line-height: 11px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .todoRow[data-state='in_progress'] .todoMark,
+  .row[data-state='running'] .stateDot {
+    box-shadow: none;
+  }
+
+  .changeRow[data-change-status='running'] .changeState {
+    box-shadow: none;
+  }
+
+  :global(body[data-theme-id='cyber']) .section,
+  :global(body[data-theme-id='cyber']) .agentViewport::before,
+  .agentRow[data-state='running'] .agentPortrait {
+    animation: none;
+  }
+}
