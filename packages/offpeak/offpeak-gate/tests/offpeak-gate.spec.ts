@@ -102,7 +102,8 @@ describe('offpeak host gate', () => {
       peakWindows: [{ startMinutes: 0, endMinutes: 1440 }],
       pollMs: 50,
     }, false)
-    const dispose = ctx.on('step/start', () => {
+    const dispose = ctx.on('session/event', (_session, event) => {
+      if (event.type !== 'step/start') return
       settings.section.enabled = true
       dispose()
     })
