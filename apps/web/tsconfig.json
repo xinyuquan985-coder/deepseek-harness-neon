@@ -25,6 +25,7 @@
     "tests/cyber-workbenches.e2e.ts",
     "tests/cyber-theme.e2e.ts",
     "tests/scaffold.ts",
+    "tests/scaffold-normalization.spec.ts",
     "tests/scaffold-hermetic.e2e.ts",
     "tests/minimal-preset.snapshot.ts",
     "tests/message-feedback-protocol.snapshot.ts",
