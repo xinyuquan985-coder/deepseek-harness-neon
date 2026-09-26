@@ -22,7 +22,7 @@ Status: implemented
 
 **消息。** `Session.deriveMessages()` 带缓存：每个 surface 条目在首次出现时通过公开的逐事件函数 `deriveEventMessage(event)` 精确投影一次；surface 重写（压缩的 `replace`，即 `SurfaceManager.replaceGeneration`）触发重建。调用方每次获得一个新数组，底层是共享的深度冻结消息：通过投影变异已记录的历史是不可表达的（会抛异常），取代了旧的逐次调用克隆隔离。外部重建器对日志前缀折叠同一个公开函数，因此不可能有两条路径产生分歧。
 
-`EpochHeader` 记录请求的非历史状态：调用配置、渲染后的系统提示词和工具 schema，空值规范化为缺失。`request/header` 始终写入完整快照：首个循环实例使用 reason `initial`，后续实例使用 `resume`，实例内变更使用 `change`。`foldRequestHeader` 选择最新快照。旧的 `request/header-delta` 事件和已移除的 `fallback` reason 在追加或加载时都会被拒绝。
+`EpochHeader` 记录请求的非历史状态：调用配置、渲染后的系统提示词和工具 schema，空值规范化为缺失。`request/header` 始终写入完整快照：首个循环实例使用 reason `initial`，后续实例使用 `resume`，实例内变更使用 `change`。`foldRequestHeader` 选择最新快照。新追加的 `request/header-delta` 事件或 `fallback` reason 会被拒绝。已存副本会在读取时按[加载带有已退役 v0 请求与模式事件的会话](../bug-fix/2026-09-26-load-retired-v0-session-events.md)升级。
 
 每个拟议步骤先领取其 inbox 批次，再运行 `agent/pre-step`。reject 不打开步骤；enter 打开 `step/start`，并把最终消息批次记录为 `user/message` 事件。随后步骤组装系统提示词与工具，`agent/request` 只能替换冻结的调用配置种子。循环记录所需的完整 header 快照，从派生消息与该 header 构建 `GenerateOptions`，对其深度冻结但保持 `AbortSignal` 活跃。首次调用配置从显式的 `AgentOptions` 出发，保留 fork 覆盖和恢复重配置；后续调用从折叠后的 header 出发。
 

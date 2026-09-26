@@ -213,7 +213,7 @@ describe('rowToMeta', () => {
 })
 
 describe('SqliteSessionPersistence: durability and crash semantics', () => {
-  it('rejects a stored v0 log containing a legacy request/header-delta event', async () => {
+  it('opens a stored v0 log containing a legacy request/header-delta event', async () => {
     const path = await freshDbPath()
     const m = meta('legacy-header-delta', '/legacy')
     const db = openDatabase(path, 'wal')
@@ -226,11 +226,16 @@ describe('SqliteSessionPersistence: durability and crash semantics', () => {
     db.close()
 
     const mounted = await backend(path)
-    await expect(mounted.ctx.sessionPersistence.load(m.id)).rejects.toThrow(/unsupported legacy request\/header-delta event at seq 1/)
+    const loaded = await mounted.ctx.sessionPersistence.load(m.id)
+    expect(loaded.events.slice(0, 3)).toMatchObject([
+      { type: 'turn/start', data: { turn: 1 } },
+      { type: 'plan/mode', seq: 1, data: { active: false } },
+      { type: 'turn/end', data: { turn: 1, reason: { kind: 'completed' } } },
+    ])
     await mounted.dispose()
   })
 
-  it('rejects a stored v0 full header carrying the legacy fallback reason', async () => {
+  it('opens a stored v0 full header carrying the legacy fallback reason', async () => {
     const path = await freshDbPath()
     const m = meta('legacy-header-fallback', '/legacy')
     const db = openDatabase(path, 'wal')
@@ -244,8 +249,8 @@ describe('SqliteSessionPersistence: durability and crash semantics', () => {
     db.close()
 
     const mounted = await backend(path)
-    await expect(mounted.ctx.sessionPersistence.load(m.id))
-      .rejects.toThrow(/unsupported legacy request\/header reason "fallback" at seq 0/)
+    const loaded = await mounted.ctx.sessionPersistence.load(m.id)
+    expect(loaded.events[0]).toMatchObject({ type: 'plan/mode', seq: 0, data: { active: false } })
     await mounted.dispose()
   })
 

@@ -173,7 +173,7 @@ interface EpochHeader {
 }
 ```
 
-规范形式：空系统提示词和空工具列表都表示为字段缺失，与请求构建方式一致。包含旧版 `request/header-delta` 事件或完整快照原因为 `fallback` 的旧版 v0 日志，会在 seed、append 和持久化加载边界被拒绝，而不会以不完整方式回放。
+规范形式：空系统提示词和空工具列表都表示为字段缺失，与请求构建方式一致。Seed 和追加会拒绝新的 `request/header-delta` 事件或 `fallback` reason。持久化加载会在内存中升级已存副本，见[加载带有已退役 v0 请求与模式事件的会话](../../.agents/notes/implemented/bug-fix/2026-09-26-load-retired-v0-session-events.md)。
 
 ### 路由容量事件：`request/context`
 

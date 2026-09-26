@@ -173,7 +173,7 @@ interface EpochHeader {
 }
 ```
 
-Canonical form represents an empty system prompt or tool list as an absent field, matching how requests are built. Legacy v0 logs containing the legacy `request/header-delta` event or its full-snapshot `fallback` reason are rejected at seed, append, and persistence-load boundaries rather than replayed incompletely.
+Canonical form represents an empty system prompt or tool list as an absent field, matching how requests are built. Seed and append reject a new `request/header-delta` event or a `fallback` reason. Persistence load upgrades a stored copy in memory, as described in [Load sessions written with retired v0 request and mode events](../../.agents/notes/implemented/bug-fix/2026-09-26-load-retired-v0-session-events.md).
 
 ### The route capacity event: `request/context`
 

@@ -20,7 +20,7 @@ Status: implemented
 
 请求头只使用规范的完整快照。初始与恢复锚点即使没有变化也仍是完整快照；实例内变化会追加另一个完整 `request/header`，reason 为 `change`。delta 事件、codec 类型、diff/apply 辅助函数，以及仅供 codec 使用的 `fallback` reason 均已移除。请求重建选择最新快照。
 
-`SESSION_FORMAT_VERSION` 仍固定为 `0`，因此 seed、追加和持久化加载验证会显式拒绝旧 v0 `request/header-delta` 事件，以及携带已删除 `fallback` reason 的完整快照。不存在兼容性 fold 或迁移。JSONL 与 SQLite 测试固定了这一失败即报错的边界；ACP（Agent Client Protocol）快照 harness 则把合法的会话中途变更表示为固定的完整请求头和完整可读提示词。
+`SESSION_FORMAT_VERSION` 仍固定为 `0`。Seed 和追加仍会拒绝新写入的 `request/header-delta` 事件，以及 reason 为 `fallback` 的完整快照。已存日志里的这些记录，以及已存的 `mode/set` 事件，会在读取时按[加载带有已退役 v0 请求与模式事件的会话](../bug-fix/2026-09-26-load-retired-v0-session-events.md)升级。ACP（Agent Client Protocol）快照 harness 则把合法的会话中途变更表示为固定的完整请求头和完整可读提示词。
 
 ## 曾考虑的替代方案
 
@@ -28,8 +28,8 @@ Status: implemented
 
 ## 验证
 
-单元测试覆盖并锁定有序 surface 的追加/替换行为、工具配对、压缩、完整请求头 fold/记录、请求重建和开发不变量。Seed 验证以及 JSONL、SQLite 加载测试会在回放前拒绝旧事件。无密钥 ACP 套件按新的表示覆盖记录、刷新、回放、变更后请求头的固定，以及沙箱模式切换 fixture（测试前置数据）。
+单元测试覆盖并锁定有序 surface 的追加/替换行为、工具配对、压缩、完整请求头 fold/记录、请求重建和开发不变量。Seed 与追加测试仍会拒绝新写入的退役事件。JSONL 与 SQLite 加载测试会打开包含这些记录的已存日志。无密钥 ACP 套件按新的表示覆盖记录、刷新、回放、变更后请求头的固定，以及沙箱模式切换 fixture（测试前置数据）。
 
 ## 后果
 
-完整请求头会增加日志体积，线性替换查找在极大 surface 上也可能较慢。由于先前实现调用 `indexOf`，替换原本就是线性的；benchmark 推迟到真实 trace 表明更简单的数组成为瓶颈时再进行。格式版本仍为 `0`，因此显式拒绝旧事件是预发布格式边界的永久组成部分。作为交换，surface 顺序和请求头状态现在各自只有一种表示，删除了链接维护、map、codec 分支、往返 fallback 和针对 delta 的快照规范化。
+完整请求头会增加日志体积，线性替换查找在极大 surface 上也可能较慢。由于先前实现调用 `indexOf`，替换原本就是线性的；benchmark 推迟到真实 trace 表明更简单的数组成为瓶颈时再进行。格式版本仍为 `0`。Seed 和追加仍会拒绝新写入的退役事件；已存日志在读取时升级。作为交换，surface 顺序和请求头状态现在各自只有一种表示，删除了链接维护、map、codec 分支、往返 fallback 和针对 delta 的快照规范化。

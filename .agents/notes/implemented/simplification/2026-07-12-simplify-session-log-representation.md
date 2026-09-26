@@ -20,7 +20,7 @@ The implementation retains append and replacement `sourceEventSeqs`, the `tool/c
 
 Request headers use canonical full snapshots only. Initial and resume anchors remain full snapshots even when unchanged; an in-instance change appends another full `request/header` with reason `change`. The delta event, codec types, diff/apply helpers, and codec-only `fallback` reason are removed. Request reconstruction selects the latest snapshot.
 
-`SESSION_FORMAT_VERSION` remains pinned at `0`, so seed, append, and persistence-load validation explicitly reject old v0 `request/header-delta` events and full snapshots carrying the removed `fallback` reason. There is no compatibility fold or migration. JSONL and SQLite tests pin this fail-loud boundary, and the ACP snapshot harness represents legitimate mid-session changes as full pinned headers and full readable prompts.
+`SESSION_FORMAT_VERSION` remains pinned at `0`. Seed and append still reject a newly written `request/header-delta` event and a full snapshot whose reason is `fallback`. A stored log containing those records, or a stored `mode/set` event, is upgraded on read by [Load sessions written with retired v0 request and mode events](../bug-fix/2026-09-26-load-retired-v0-session-events.md). The ACP snapshot harness represents legitimate mid-session changes as full pinned headers and full readable prompts.
 
 ## Alternatives considered
 
@@ -28,8 +28,8 @@ Request headers use canonical full snapshots only. Initial and resume anchors re
 
 ## Verification
 
-Unit coverage pins ordered-surface append/replace behavior, tool pairing, compaction, full-header folding/logging, request reconstruction, and dev invariants. Seed validation plus JSONL and SQLite load tests reject the legacy event before replay. The keyless ACP suite exercises record, refresh, replay, changed-header pinning, and the sandbox mode-switch fixture in the new shape.
+Unit coverage pins ordered-surface append/replace behavior, tool pairing, compaction, full-header folding/logging, request reconstruction, and dev invariants. Seed and append tests still reject a newly written retired event. JSONL and SQLite load tests open a stored log that contains one. The keyless ACP suite exercises record, refresh, replay, changed-header pinning, and the sandbox mode-switch fixture in the new shape.
 
 ## Consequences
 
-Full headers increase log volume, and linear replacement lookup could be slower on very large surfaces. Replacements were already linear because the prior implementation called `indexOf`; benchmarks are deferred until real traces show the simpler array is a bottleneck. The format version remains `0`, so explicit legacy-event rejection is a permanent part of the pre-release format boundary. In return, surface order and request-header state each have one representation, deleting link maintenance, maps, codec arms, round-trip fallback, and delta-aware snapshot normalization.
+Full headers increase log volume, and linear replacement lookup could be slower on very large surfaces. Replacements were already linear because the prior implementation called `indexOf`; benchmarks are deferred until real traces show the simpler array is a bottleneck. The format version remains `0`. Seed and append still reject a newly written retired event; stored logs are upgraded on read. In return, surface order and request-header state each have one representation, deleting link maintenance, maps, codec arms, round-trip fallback, and delta-aware snapshot normalization.

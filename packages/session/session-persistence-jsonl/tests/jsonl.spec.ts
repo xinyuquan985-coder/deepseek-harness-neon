@@ -529,7 +529,7 @@ describe('JsonlSessionPersistence: durability and crash semantics', () => {
     expect(discovery).toHaveBeenCalledWith(controller.signal)
   })
 
-  it('rejects a stored v0 log containing a legacy request/header-delta event', async () => {
+  it('opens a stored v0 log containing a legacy request/header-delta event', async () => {
     const m = meta('legacy-header-delta', '/legacy')
     const path = rawLogPath(root, m.cwd, m.id)
     await mkdir(sessionDir(root, m.cwd, m.id), { recursive: true })
@@ -541,10 +541,15 @@ describe('JsonlSessionPersistence: durability and crash semantics', () => {
       '',
     ].join('\n'))
 
-    await expect(ctx.sessionPersistence.load(m.id)).rejects.toThrow(/unsupported legacy request\/header-delta event at seq 1/)
+    const loaded = await ctx.sessionPersistence.load(m.id)
+    expect(loaded.events.slice(0, 3)).toMatchObject([
+      { type: 'turn/start', data: { turn: 1 } },
+      { type: 'plan/mode', seq: 1, data: { active: false } },
+      { type: 'turn/end', data: { turn: 1, reason: { kind: 'completed' } } },
+    ])
   })
 
-  it('rejects a stored v0 full header carrying the legacy fallback reason', async () => {
+  it('opens a stored v0 full header carrying the legacy fallback reason', async () => {
     const m = meta('legacy-header-fallback', '/legacy')
     const path = rawLogPath(root, m.cwd, m.id)
     await mkdir(sessionDir(root, m.cwd, m.id), { recursive: true })
@@ -559,8 +564,8 @@ describe('JsonlSessionPersistence: durability and crash semantics', () => {
       '',
     ].join('\n'))
 
-    await expect(ctx.sessionPersistence.load(m.id))
-      .rejects.toThrow(/unsupported legacy request\/header reason "fallback" at seq 0/)
+    const loaded = await ctx.sessionPersistence.load(m.id)
+    expect(loaded.events[0]).toMatchObject({ type: 'plan/mode', seq: 0, data: { active: false } })
   })
 
   it('persists a forked child seed through the existing session write path', async () => {

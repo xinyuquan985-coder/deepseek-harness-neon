@@ -66,6 +66,6 @@ The tool renders the submitted plan as a generic card titled by its first headin
 
 ## Consequences
 
-The implementation has one vocabulary for one shipped feature. Adding another collaboration stance is an explicit design decision instead of a config entry, and automation clients do not acquire human mode controls through ACP. The migration intentionally rejects old `mode/set` logs and old `modes.plan.section` configuration under the repository's pre-release format policy.
+The implementation has one vocabulary for one shipped feature. Adding another collaboration stance is an explicit design decision instead of a config entry, and automation clients do not acquire human mode controls through ACP. Old `modes.plan.section` configuration stays rejected. A stored `mode/set` event is upgraded on read by [Load sessions written with retired v0 request and mode events](../bug-fix/2026-09-26-load-retired-v0-session-events.md): `plan` becomes active `plan/mode`, and any other named mode becomes inactive.
 
 Plan state remains reconstructable and tool schemas remain stable, but an idle pending selection is lost if the process exits before the next boundary. Entering or leaving plan mode changes the prompt from order 50 onward, and a model that ignores the guidance can still mutate unless the deployment independently configures sandbox, approval, or filesystem policy.

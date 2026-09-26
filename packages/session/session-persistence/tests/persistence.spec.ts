@@ -1848,6 +1848,26 @@ describe('SessionPersistence service registration', () => {
     await fiber.dispose()
   })
 
+  it('rejects retired v0 events appended through the persistence service', async () => {
+    const ctx = new Context()
+    await ctx.plugin(SessionStore)
+    const fiber = await ctx.plugin(MemoryPersistence)
+    const deltaId = SessionId('legacy-append-delta')
+    const modeId = SessionId('legacy-append-mode')
+    const fallbackId = SessionId('legacy-append-fallback')
+    await ctx.sessionPersistence.create(meta(deltaId))
+    await ctx.sessionPersistence.create(meta(modeId))
+    await ctx.sessionPersistence.create(meta(fallbackId))
+
+    await expect(ctx.sessionPersistence.append(deltaId, [legacyHeaderDelta()]))
+      .rejects.toThrow(`session "${deltaId}" contains unsupported legacy request/header-delta event at seq 0`)
+    await expect(ctx.sessionPersistence.append(modeId, [legacyModeSet()]))
+      .rejects.toThrow(`session "${modeId}" contains unsupported legacy mode/set event at seq 0`)
+    await expect(ctx.sessionPersistence.append(fallbackId, [legacyFallbackHeader()]))
+      .rejects.toThrow(`session "${fallbackId}" contains unsupported legacy request/header reason "fallback" at seq 0`)
+    await fiber.dispose()
+  })
+
   it('rejects a legacy fallback header buffered by a pre-change live producer', async () => {
     const ctx = new Context()
     await ctx.plugin(SessionStore)
@@ -1861,47 +1881,233 @@ describe('SessionPersistence service registration', () => {
     await fiber.dispose()
   })
 
-  it('rejects a legacy stored prefix during live HMR adoption', async () => {
+  it('treats an upgraded stored prefix as an ordinary live-session collision', async () => {
     const id = SessionId('legacy-hmr')
     const m = meta(id, '/legacy')
-    const legacy = legacyHeaderDelta()
-    const store: MemoryStore = new Map([[id, { meta: m, events: [legacy] }]])
+    const store: MemoryStore = new Map([[id, { meta: m, events: [legacyHeaderDelta()] }]])
     const ctx = new Context()
     await ctx.plugin(SessionStore)
-    // A current live session cannot carry the obsolete event in its seed, but
-    // HMR still has to identify the persisted prefix as unsupported rather than
-    // treating it as an ordinary live-prefix collision.
     const session = ctx.sessions.create(id, { meta: { cwd: '/legacy' } })
     const fiber = await ctx.plugin(MemoryPersistence, { store })
 
     await expect(ctx.sessions.flush(session))
-      .rejects.toThrow(/unsupported legacy request\/header-delta event at seq 0/)
+      .rejects.toThrow(`session "${id}" already has a persisted log on disk that does not match this live session (id collision)`)
     await Promise.allSettled([fiber.dispose()])
   })
 
-  it('rejects a stored legacy fallback header during load', async () => {
-    const id = SessionId('legacy-fallback-load')
+  it('loads a complete fallback snapshot and a plan mode/set as current events', async () => {
+    const id = SessionId('legacy-readable')
     const m = meta(id, '/legacy')
-    const store: MemoryStore = new Map([[id, { meta: m, events: [legacyFallbackHeader()] }]])
+    const header = {
+      type: 'request/header',
+      seq: 0,
+      time: 1,
+      data: {
+        header: { config: { provider: 'deepseek', model: 'deepseek-v4-flash' }, system: 'guide' },
+        reason: 'fallback',
+      },
+    } as unknown as SessionEvent
+    const named = {
+      type: 'mode/set',
+      seq: 1,
+      time: 2,
+      data: { name: 'plan' },
+    } as unknown as SessionEvent
+    const laterFallback = {
+      type: 'request/header',
+      seq: 2,
+      time: 3,
+      data: {
+        header: { config: { provider: 'deepseek', model: 'deepseek-chat' } },
+        reason: 'fallback',
+      },
+    } as unknown as SessionEvent
+    const store: MemoryStore = new Map([[id, { meta: m, events: [header, named, laterFallback] }]])
     const ctx = new Context()
     await ctx.plugin(SessionStore)
     const fiber = await ctx.plugin(MemoryPersistence, { store })
 
-    await expect(ctx.sessionPersistence.load(id))
-      .rejects.toThrow('unsupported legacy request/header reason "fallback" at seq 0')
+    const loaded = await ctx.sessionPersistence.load(id)
+    expect(loaded.events[0]).toMatchObject({
+      type: 'request/header',
+      seq: 0,
+      data: {
+        header: { config: { provider: 'deepseek', model: 'deepseek-v4-flash' }, system: 'guide' },
+        reason: 'initial',
+      },
+    })
+    expect(loaded.events[1]).toMatchObject({ type: 'plan/mode', seq: 1, data: { active: true } })
+    expect(loaded.events[2]).toMatchObject({
+      type: 'request/header',
+      seq: 2,
+      data: {
+        header: { config: { provider: 'deepseek', model: 'deepseek-chat' } },
+        reason: 'change',
+      },
+    })
     await fiber.dispose()
   })
 
-  it('rejects a stored legacy named-mode event during load', async () => {
-    const id = SessionId('legacy-mode-load')
+  it('repeats the header in force when a partial header delta cannot be reapplied', async () => {
+    const id = SessionId('legacy-partial-delta')
     const m = meta(id, '/legacy')
-    const store: MemoryStore = new Map([[id, { meta: m, events: [legacyModeSet()] }]])
+    const prior = {
+      type: 'request/header',
+      seq: 0,
+      time: 1,
+      data: {
+        header: { config: { provider: 'deepseek', model: 'deepseek-v4-flash' } },
+        reason: 'initial',
+      },
+    } as unknown as SessionEvent
+    const plan = { type: 'plan/mode', seq: 1, time: 2, data: { active: true } } as unknown as SessionEvent
+    const delta = legacyHeaderDelta(2)
+    const other = { type: 'mode/set', seq: 3, time: 4, data: { mode: 'default' } } as unknown as SessionEvent
+    const store: MemoryStore = new Map([[id, { meta: m, events: [prior, plan, delta, other] }]])
+    const ctx = new Context()
+    await ctx.plugin(SessionStore)
+    const fiber = await ctx.plugin(MemoryPersistence, { store })
+
+    const loaded = await ctx.sessionPersistence.load(id)
+    expect(loaded.events[2]).toMatchObject({
+      type: 'request/header',
+      seq: 2,
+      data: {
+        header: { config: { provider: 'deepseek', model: 'deepseek-v4-flash' } },
+        reason: 'change',
+      },
+    })
+    expect(loaded.events[3]).toMatchObject({ type: 'plan/mode', seq: 3, data: { active: false } })
+    await fiber.dispose()
+  })
+
+  it('opens a log whose only retired record is an incomplete snapshot', async () => {
+    const id = SessionId('legacy-incomplete')
+    const m = meta(id, '/legacy')
+    const store: MemoryStore = new Map([[id, {
+      meta: m,
+      events: [legacyFallbackHeader(), legacyModeSet(1), legacyHeaderDelta(2)],
+    }]])
+    const ctx = new Context()
+    await ctx.plugin(SessionStore)
+    const fiber = await ctx.plugin(MemoryPersistence, { store })
+
+    const loaded = await ctx.sessionPersistence.load(id)
+    expect(loaded.events.slice(0, 3)).toMatchObject([
+      { type: 'plan/mode', data: { active: false } },
+      { type: 'plan/mode', data: { active: true } },
+      { type: 'plan/mode', data: { active: true } },
+    ])
+    await fiber.dispose()
+  })
+
+  it('leaves an unreadable delta in place of the header already stored', async () => {
+    const id = SessionId('legacy-unreadable-delta')
+    const m = meta(id, '/legacy')
+    const header = {
+      type: 'request/header',
+      seq: 0,
+      time: 1,
+      data: {
+        header: { config: { provider: 'deepseek', model: 'deepseek-v4-flash' } },
+        reason: 'initial',
+      },
+    } as unknown as SessionEvent
+    const junk = [
+      { data: null },
+      { data: { config: { provider: 'deepseek', model: 'deepseek-chat' }, extra: 1 } },
+      { data: { config: 'x' } },
+      { data: { config: { provider: 'deepseek' } } },
+      { data: { header: { config: { model: 'legacy' } } } },
+    ].map((item, index) => ({
+      type: 'request/header-delta',
+      seq: index + 1,
+      time: index + 2,
+      data: item.data,
+    } as unknown as SessionEvent))
+    const store: MemoryStore = new Map([[id, { meta: m, events: [header, ...junk] }]])
+    const ctx = new Context()
+    await ctx.plugin(SessionStore)
+    const fiber = await ctx.plugin(MemoryPersistence, { store })
+
+    const loaded = await ctx.sessionPersistence.load(id)
+    for (const event of loaded.events.slice(1, 6)) {
+      expect(event).toMatchObject({
+        type: 'request/header',
+        data: {
+          header: { config: { provider: 'deepseek', model: 'deepseek-v4-flash' } },
+          reason: 'change',
+        },
+      })
+    }
+    await fiber.dispose()
+  })
+
+  it('does not treat a non-boolean plan record as the plan state a later delta repeats', async () => {
+    const id = SessionId('legacy-plan-ignored')
+    const m = meta(id, '/legacy')
+    const plan = { type: 'plan/mode', seq: 0, time: 1, data: { active: 'nope' } } as unknown as SessionEvent
+    const bare = { type: 'request/header', seq: 1, time: 2, data: { reason: 'change' } } as unknown as SessionEvent
+    const store: MemoryStore = new Map([[id, { meta: m, events: [plan, bare, legacyHeaderDelta(2)] }]])
     const ctx = new Context()
     await ctx.plugin(SessionStore)
     const fiber = await ctx.plugin(MemoryPersistence, { store })
 
     await expect(ctx.sessionPersistence.load(id))
-      .rejects.toThrow('unsupported legacy mode/set event at seq 0')
+      .rejects.toThrow('seed request/header at index 1 lacks provider/model')
+    await fiber.dispose()
+  })
+
+  it('converts a complete header delta into the first request snapshot', async () => {
+    const id = SessionId('legacy-complete-delta')
+    const m = meta(id, '/legacy')
+    const delta = {
+      type: 'request/header-delta',
+      seq: 0,
+      time: 1,
+      data: { header: { config: { provider: 'deepseek', model: 'deepseek-v4-flash' }, tools: [] } },
+    } as unknown as SessionEvent
+    const again = {
+      type: 'request/header-delta',
+      seq: 1,
+      time: 2,
+      data: { config: { provider: 'deepseek', model: 'deepseek-chat' } },
+    } as unknown as SessionEvent
+    const store: MemoryStore = new Map([[id, { meta: m, events: [delta, again] }]])
+    const ctx = new Context()
+    await ctx.plugin(SessionStore)
+    const fiber = await ctx.plugin(MemoryPersistence, { store })
+
+    const loaded = await ctx.sessionPersistence.load(id)
+    expect(loaded.events[0]).toMatchObject({
+      type: 'request/header',
+      data: { reason: 'initial', header: { config: { provider: 'deepseek', model: 'deepseek-v4-flash' }, tools: [] } },
+    })
+    expect(loaded.events[1]).toMatchObject({
+      type: 'request/header',
+      data: { reason: 'change', header: { config: { provider: 'deepseek', model: 'deepseek-chat' } } },
+    })
+    await fiber.dispose()
+  })
+
+  it('rejects a stored mode/set record that names no mode', async () => {
+    const id = SessionId('legacy-mode-malformed')
+    const m = meta(id, '/legacy')
+    const broken = { type: 'mode/set', seq: 0, time: 1, data: null } as unknown as SessionEvent
+    const empty = { type: 'mode/set', seq: 0, time: 1, data: { name: '' } } as unknown as SessionEvent
+    const store: MemoryStore = new Map([
+      [id, { meta: m, events: [broken] }],
+      [SessionId('legacy-mode-empty'), { meta: meta(SessionId('legacy-mode-empty'), '/legacy'), events: [empty] }],
+    ])
+    const ctx = new Context()
+    await ctx.plugin(SessionStore)
+    const fiber = await ctx.plugin(MemoryPersistence, { store })
+
+    const emptyId = SessionId('legacy-mode-empty')
+    await expect(ctx.sessionPersistence.load(id))
+      .rejects.toThrow(`session "${id}" contains malformed legacy mode/set event at seq 0`)
+    await expect(ctx.sessionPersistence.load(emptyId))
+      .rejects.toThrow(`session "${emptyId}" contains malformed legacy mode/set event at seq 0`)
     await fiber.dispose()
   })
 

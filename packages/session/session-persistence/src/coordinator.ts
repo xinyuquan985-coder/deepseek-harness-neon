@@ -270,7 +270,7 @@ function seedCoversPrefix(seed: readonly SessionEvent[], prefix: readonly Sessio
     })
 }
 
-/** Reject events from an obsolete v0 vocabulary that this build cannot replay. */
+/** Reject events from an obsolete v0 vocabulary that a live producer must not persist. */
 function assertSupportedEvents(events: readonly SessionEvent[], id: SessionId): void {
   const legacyType: string = 'request/header-delta'
   const legacy = events.find(event => event.type === legacyType)
@@ -287,6 +287,135 @@ function assertSupportedEvents(events: readonly SessionEvent[], id: SessionId): 
   if (fallback !== undefined) {
     throw new Error(`session "${id}" contains unsupported legacy request/header reason "fallback" at seq ${fallback.seq}`)
   }
+}
+
+/** Header and plan state already in force while a stored log is upgraded. */
+interface RetiredEventCursor {
+  header: Record<string, unknown> | undefined
+  planActive: boolean
+}
+
+/**
+ * A complete `EpochHeader` record: `config.provider` and `config.model` are
+ * present, and no key sits outside the current header fields.
+ * @param value - a candidate header object.
+ * @returns the header record, or `undefined` when the candidate is partial.
+ */
+function completeStoredHeader(value: unknown): Record<string, unknown> | undefined {
+  const record = asRecord(value)
+  if (record === undefined || !hasOnlyKeys(record, ['config'], ['adapterDefaults', 'system', 'tools'])) {
+    return undefined
+  }
+  const config = asRecord(record['config'])
+  if (config === undefined
+    || typeof config['provider'] !== 'string' || config['provider'].length === 0
+    || typeof config['model'] !== 'string' || config['model'].length === 0) {
+    return undefined
+  }
+  return record
+}
+
+/**
+ * Keep sequence numbers when a retired event cannot become a current header.
+ * A prior header is repeated so request reconstruction stays on that snapshot.
+ * With no header yet, the event repeats the plan state already in force,
+ * which is inactive before the first `plan/mode`.
+ * @param event - the stored event to replace in the read view.
+ * @param cursor - header and plan state before this event.
+ * @returns a current event at the same `seq`.
+ */
+function placeholderForRetiredEvent(event: SessionEvent, cursor: RetiredEventCursor): SessionEvent {
+  if (cursor.header !== undefined) {
+    return {
+      ...event,
+      type: 'request/header',
+      data: { header: cursor.header, reason: 'change' },
+    } as SessionEvent
+  }
+  return {
+    ...event,
+    type: 'plan/mode',
+    data: { active: cursor.planActive },
+  } as SessionEvent
+}
+
+/** Remember a header or plan selection that the upgraded event established. */
+function noteUpgradedEvent(event: SessionEvent, cursor: RetiredEventCursor): void {
+  if (event.type === 'request/header') {
+    const header = asRecord(asRecord(event.data)?.['header'])
+    if (header !== undefined) cursor.header = header
+    return
+  }
+  // plan/mode is declared by dsh-plan-mode, which this package does not import.
+  const planModeType: string = 'plan/mode'
+  if (event.type !== planModeType) return
+  const active = asRecord(event.data)?.['active']
+  if (typeof active === 'boolean') cursor.planActive = active
+}
+
+/**
+ * Project one retired v0 event into the current read view.
+ * A complete delta or `fallback` snapshot becomes `request/header`. A partial
+ * delta is not reapplied. `mode/set` becomes `plan/mode`, active only for `plan`.
+ * @param event - one stored event.
+ * @param id - session whose diagnostic names the event.
+ * @param cursor - header and plan state before this event.
+ * @returns the event the rest of the reader validates.
+ */
+function upgradeRetiredEvent(event: SessionEvent, id: SessionId, cursor: RetiredEventCursor): SessionEvent {
+  const legacyDelta: string = 'request/header-delta'
+  const legacyMode: string = 'mode/set'
+  if (event.type === legacyDelta) {
+    const data = asRecord(event.data)
+    const embedded = completeStoredHeader(data?.['header']) ?? completeStoredHeader(data)
+    if (embedded !== undefined) {
+      return {
+        ...event,
+        type: 'request/header',
+        data: { header: embedded, reason: cursor.header === undefined ? 'initial' : 'change' },
+      } as SessionEvent
+    }
+    return placeholderForRetiredEvent(event, cursor)
+  }
+  if (event.type === 'request/header') {
+    const data = asRecord(event.data)
+    if (data?.['reason'] === 'fallback') {
+      const header = completeStoredHeader(data['header'])
+      if (header !== undefined) {
+        return {
+          ...event,
+          data: { header, reason: cursor.header === undefined ? 'initial' : 'change' },
+        } as SessionEvent
+      }
+      return placeholderForRetiredEvent(event, cursor)
+    }
+  }
+  if (event.type !== legacyMode) return event
+  const data = asRecord(event.data)
+  const mode = typeof data?.['mode'] === 'string'
+    ? data['mode']
+    : typeof data?.['name'] === 'string' ? data['name'] : undefined
+  if (mode === undefined || mode.length === 0) {
+    throw new Error(`session "${id}" contains malformed legacy mode/set event at seq ${event.seq}`)
+  }
+  return { ...event, type: 'plan/mode', data: { active: mode === 'plan' } } as SessionEvent
+}
+
+/**
+ * Upgrade retired v0 request and mode events before current-record validation.
+ * Storage stays append-only; only the read view changes. Sequence numbers stay
+ * put so a later append still continues the stored log.
+ * @param events - stored events in log order.
+ * @param id - session whose diagnostics name a malformed record.
+ * @returns the upgraded events.
+ */
+function upgradeRetiredEvents(events: readonly SessionEvent[], id: SessionId): SessionEvent[] {
+  const cursor: RetiredEventCursor = { header: undefined, planActive: false }
+  return events.map((event) => {
+    const upgraded = upgradeRetiredEvent(event, id, cursor)
+    noteUpgradedEvent(upgraded, cursor)
+    return upgraded
+  })
 }
 
 /** Return an object record without widening arrays into message payloads. */
@@ -543,9 +672,10 @@ function eventMessageId(event: SessionEvent): PersistedMessageId | undefined {
 
 /** Materialize stored events as upgraded, validated snapshots with immutable messages. */
 function snapshotStoredEvents(events: readonly SessionEvent[], id: SessionId): SessionEvent[] {
-  assertSupportedEvents(events, id)
+  const upgraded = upgradeRetiredEvents(events, id)
+  assertSupportedEvents(upgraded, id)
   const messageIds = new Map<number, PersistedMessageId>()
-  return events.map((event) => {
+  return upgraded.map((event) => {
     const migratedStart = migrateLegacyTurnStartEvent(event, id)
     const migratedTurn = migrateLegacyTurnEndEvent(migratedStart, id)
     const migratedSteering = migrateLegacySteeringEvent(migratedTurn, id)
@@ -558,9 +688,10 @@ function snapshotStoredEvents(events: readonly SessionEvent[], id: SessionId): S
 
 /** Upgrade and validate an exclusively owned backend result without copying it. */
 function adoptStoredEvents(events: SessionEvent[], id: SessionId): SessionEvent[] {
-  assertSupportedEvents(events, id)
+  const upgraded = upgradeRetiredEvents(events, id)
+  assertSupportedEvents(upgraded, id)
   const messageIds = new Map<number, PersistedMessageId>()
-  for (const [index, event] of events.entries()) {
+  for (const [index, event] of upgraded.entries()) {
     const migratedStart = migrateLegacyTurnStartEvent(event, id)
     const migratedTurn = migrateLegacyTurnEndEvent(migratedStart, id)
     const migratedSteering = migrateLegacySteeringEvent(migratedTurn, id)
